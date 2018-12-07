@@ -8,6 +8,7 @@
         <SpaRoot>ClientApp\</SpaRoot>
         <CoreVersion>2.1.1</CoreVersion>
         <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+        <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
 
         <!-- Set this to true if you enable server-side prerendering -->
         <BuildServerSideRenderer>false</BuildServerSideRenderer>
@@ -16,13 +17,17 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="$(CoreVersion)" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.3" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.1.2" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(CoreVersion)" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(CoreVersion)" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.4" />
     </ItemGroup>
 
     <ItemGroup>
-        <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="$(CoreVersion)" />
-        <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="$(CoreVersion)" />
+        <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
     </ItemGroup>
 
     <ItemGroup>
@@ -32,7 +37,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="ClientApp\.angular-cli.json" />
+        <_ContentIncludedByDefault Remove="ClientApp\.angular-cli.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Repositories" />
+      <Folder Include="Services" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
