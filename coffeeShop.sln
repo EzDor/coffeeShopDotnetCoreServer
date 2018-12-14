@@ -12,5 +12,6 @@ Global
 		{DE0D4C9A-B303-43A7-AE9B-2BA11D833120}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE0D4C9A-B303-43A7-AE9B-2BA11D833120}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE0D4C9A-B303-43A7-AE9B-2BA11D833120}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE0D4C9A-B303-43A7-AE9B-2BA11D833120}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

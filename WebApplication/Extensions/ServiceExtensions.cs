@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using WebApplication.Services;
+using WebApplication.Services.Interfaces;
 
 namespace WebApplication.Extensions
 {
@@ -8,6 +10,7 @@ namespace WebApplication.Extensions
         {
             // services.AddTransient<ITopicAreaService, TopicAreaService>();
             // Add all other services here.
+            services.AddScoped<IUserService, UserService>();
             return services;
         }
     }
