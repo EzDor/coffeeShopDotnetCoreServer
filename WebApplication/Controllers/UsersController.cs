@@ -20,7 +20,6 @@ namespace WebApplication.Controllers
             _userService = userService;
         }
 
-
         [HttpPost("login")]
         [AllowAnonymous]
         public ActionResult<LoginResponseParams> Login([FromBody] LoginRequestParams loginRequestParams)
@@ -28,19 +27,18 @@ namespace WebApplication.Controllers
             return Ok(_userService.Login(loginRequestParams.username, loginRequestParams.password));
         }
 
-        [HttpGet]
-        public ActionResult<List<Users>> GetUsers()
-        {
-            return Ok();
-        }
-
-
         [HttpPost("signUp")]
         [AllowAnonymous]
         public ActionResult<Status> CreateUser([FromBody] UserForm userForm)
         {
             _userService.CreateUser(userForm);
-            return  Ok(new Status("User created successfully"));
+            return Ok(new Status("User created successfully"));
+        }
+        
+        [HttpGet]
+        public ActionResult<List<Users>> GetUsers()
+        {
+            return Ok();
         }
     }
 }

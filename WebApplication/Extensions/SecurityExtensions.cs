@@ -15,13 +15,6 @@ namespace WebApplication.Extensions
     {
         public static void ConfigAppSecurity(this IServiceCollection services, IConfiguration configuration)
         {
-            // ===== Add Identity ========
-//            services.AddIdentity<Users, IdentityRole>()
-//                .AddEntityFrameworkStores<CoffeeShopDotNetContext>()
-//                .AddDefaultTokenProviders();
-
-//            services
-//                .AddScoped<Microsoft.AspNetCore.Identity.IUserClaimsPrincipalFactory<Users>, AppClaimsPrincipalFactory>();
 
             // ===== Add Jwt Authentication ========
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims

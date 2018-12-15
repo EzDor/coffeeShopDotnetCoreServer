@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using WebApplication.Extensions;
+using WebApplication.Middleware;
 using WebApplication.Models;
 
 namespace WebApplication
@@ -48,7 +49,7 @@ namespace WebApplication
             services.AddEntityFrameworkNpgsql().AddDbContext<CoffeeShopDotNetContext>(opt =>
                 opt.UseNpgsql(Configuration.GetConnectionString("dbConnectionString")));
 
-
+            
             services.RegisterServices();
             services.RegisterRepositories();
             services.ConfigAppSecurity(Configuration);   
@@ -75,6 +76,8 @@ namespace WebApplication
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
             app.UseAuthentication();
+            
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 
             app.UseMvc(routes =>
             {

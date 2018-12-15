@@ -10,5 +10,11 @@ namespace WebApplication.Utils
             this.message = message;
             this.success = true;
         }
+
+        public Status(string message, bool success)
+        {
+            this.message = message;
+            this.success = success;
+        }
     }
 }

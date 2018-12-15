@@ -20,8 +20,6 @@ namespace WebApplication.Services
         private readonly IConfiguration _configuration;
 
         private readonly IUserRepository _userRepository;
-//        private readonly SignInManager<Users> _signInManager;
-//        private readonly UserManager<Users> _userManager;
 
         public UserService(IConfiguration configuration, IUserRepository userRepository)
         {
@@ -98,16 +96,16 @@ namespace WebApplication.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private string GetUserRole(Users user)
+        private static string GetUserRole(Users user)
         {
             string role;
             if (user.IsAdmin != null && user.IsAdmin.Value)
             {
-                role = UserRole.ADMIN_ROLE;
+                role = Constants.ADMIN_ROLE;
             }
             else
             {
-                role = UserRole.USER_ROLE;
+                role = Constants.USER_ROLE;
             }
 
             return role;
