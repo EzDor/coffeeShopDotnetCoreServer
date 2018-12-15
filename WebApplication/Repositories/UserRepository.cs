@@ -13,6 +13,11 @@ namespace WebApplication.Repositories
 
         public Users FindByUsernameAndStatus(string username, UserStatus status)
         {
+            return GetSingleOrDefault(user => user.Username.Equals(username.ToLower()) && user.Status == status);
+        }
+        
+        public Users FindByUsername(string username)
+        {
             return GetSingleOrDefault(user => user.Username.Equals(username.ToLower()));
         }
     }

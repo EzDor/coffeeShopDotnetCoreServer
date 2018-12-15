@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using WebApplication.Controllers.Forms;
@@ -27,14 +27,15 @@ namespace WebApplication.Services
             _userRepository = userRepository;
         }
 
+        /*********************************
+        * Public Functions
+        *********************************/
+
         public LoginResponseParams Login(string username, string password)
         {
-            var user = _userRepository.FindByUsernameAndStatus(username.ToLower(), UserStatus.ACTIVE);
+            var user = GetActiveUser(username);
 
-            if (user == null)
-            {
-                throw new KeyNotFoundException("User not found");
-            }
+            IsUserExist(user);
 
             if (!PasswordEncoder.Match(user.Password, password))
             {
@@ -49,28 +50,51 @@ namespace WebApplication.Services
             return loginParams;
         }
 
-        public void CreateUser(UserForm userForm)
+        public void CreateUser(UserForm userForm, bool isAdminRequest)
         {
-            var user = _userRepository.FindByUsernameAndStatus(userForm.username.ToLower(), UserStatus.ACTIVE);
-            if (user != null)
-            {
-                throw new ApplicationException("User is already exist");
-            }
-
-            user = new Users
-            {
-                Username = userForm.username,
-                FirstName = userForm.firstName,
-                LastName = userForm.lastName,
-                Status = UserStatus.ACTIVE,
-                Password = PasswordEncoder.Encode(userForm.password),
-                IsAdmin = false
-            };
-
+            var user = new Users();
+            IsUserNameExist(userForm.username);
+            PrepareUser(user, userForm, isAdminRequest, true);
             _userRepository.Add(user);
             _userRepository.SaveChanges();
         }
 
+
+        public List<Users> GetUsers()
+        {
+            return _userRepository.GetAll().ToList();
+        }
+
+        public void Update(UpdatedUserForm updatedUserForm, bool isAdminRequest)
+        {
+            var user = GetUserToUpdate(updatedUserForm.usernameToUpdate, isAdminRequest);
+            IsUserExist(user);
+            if (!isAdminRequest && !PasswordEncoder.Match(user.Password, updatedUserForm.password))
+            {
+                throw new ApplicationException("Cannot update user, username or password are incorrect");
+            }
+
+            PrepareUser(user, updatedUserForm.updatedUserDetails, isAdminRequest, !isAdminRequest);
+            _userRepository.SaveChanges();
+        }
+
+        public void DeleteUser(string username)
+        {
+            var user = GetUser(username);
+            IsUserExist(user);
+            user.Status = UserStatus.DISCARDED;
+            _userRepository.SaveChanges();
+        }
+
+        public Users GetActiveUser(string username)
+        {
+            return _userRepository.FindByUsernameAndStatus(username.ToLower(), UserStatus.ACTIVE);
+        }
+
+
+        /*********************************
+        * Private Functions
+        *********************************/
 
         private object GenerateJwtToken(Users user)
         {
@@ -78,7 +102,8 @@ namespace WebApplication.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("roles", GetUserRole(user)),
+                new Claim(ClaimTypes.Role, GetUserRole(user)),
+                new Claim(Constants.role_key, GetUserRole(user)),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
@@ -109,6 +134,49 @@ namespace WebApplication.Services
             }
 
             return role;
+        }
+
+        private static void IsUserExist(Users user)
+        {
+            if (user == null)
+            {
+                throw new ApplicationException("User is not exist");
+            }
+        }
+
+        private void IsUserNameExist(string username)
+        {
+            if (GetActiveUser(username) != null)
+            {
+                throw new ApplicationException("User " + username + " is already exist");
+            }
+        }
+
+        private Users GetUser(string username)
+        {
+            return _userRepository.FindByUsername(username.ToLower());
+        }
+
+
+        private Users GetUserToUpdate(string username, bool isAdminRequest)
+        {
+            return isAdminRequest ? GetUser(username) : GetActiveUser(username);
+        }
+
+        private Users PrepareUser(Users user, UserForm userForm, bool isAdminRequest, bool updatePassword)
+        {
+            user.Username = userForm.username;
+            user.FirstName = userForm.firstName;
+            user.LastName = userForm.lastName;
+            user.Status = userForm.status;
+            user.IsAdmin = userForm.admin && isAdminRequest;
+
+            if (updatePassword)
+            {
+                user.Password = PasswordEncoder.Encode(userForm.password);
+            }
+
+            return user;
         }
     }
 }

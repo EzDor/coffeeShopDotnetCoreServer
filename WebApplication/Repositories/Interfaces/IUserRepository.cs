@@ -7,6 +7,7 @@ namespace WebApplication.Repositories.Interfaces
     {
 
         Users FindByUsernameAndStatus(string username, UserStatus status);
+        Users FindByUsername(string username);
 
     }
 }

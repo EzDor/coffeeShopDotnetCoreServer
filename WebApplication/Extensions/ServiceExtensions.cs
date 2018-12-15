@@ -8,9 +8,9 @@ namespace WebApplication.Extensions
     {
         public static IServiceCollection RegisterServices(this IServiceCollection services)
         {
-            // services.AddTransient<ITopicAreaService, TopicAreaService>();
             // Add all other services here.
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IValidationService, ValidationService>();
             return services;
         }
     }

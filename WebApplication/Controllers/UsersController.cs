@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,20 @@ namespace WebApplication.Controllers
     public class UsersController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IValidationService _validationService;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IValidationService validationService)
         {
             _userService = userService;
+            _validationService = validationService;
+        }
+
+
+        [HttpGet]
+        [Authorize(Roles = Constants.ADMIN_ROLE)]
+        public ActionResult<List<Users>> GetUsers()
+        {
+            return Ok(_userService.GetUsers());
         }
 
         [HttpPost("login")]
@@ -31,14 +42,27 @@ namespace WebApplication.Controllers
         [AllowAnonymous]
         public ActionResult<Status> CreateUser([FromBody] UserForm userForm)
         {
-            _userService.CreateUser(userForm);
+            var isAdminRequest = HttpContext.User.IsInRole(Constants.ADMIN_ROLE);
+            _validationService.ValidateUserForm(userForm);
+            _userService.CreateUser(userForm, isAdminRequest);
             return Ok(new Status("User created successfully"));
         }
-        
-        [HttpGet]
-        public ActionResult<List<Users>> GetUsers()
+
+        [HttpPost("update")]
+        public ActionResult<Status> Update([FromBody] UpdatedUserForm updatedUserForm)
         {
-            return Ok();
+            var isAdminRequest = HttpContext.User.IsInRole(Constants.ADMIN_ROLE);
+            _validationService.ValidateUserForm(updatedUserForm.updatedUserDetails);
+            _userService.Update(updatedUserForm, isAdminRequest);
+            return Ok(new Status("User updated successfully"));
+        }
+
+        [HttpPost("delete")]
+        [Authorize(Roles = Constants.ADMIN_ROLE)]
+        public ActionResult<Status> DeleteUser([FromBody] DeleteUserRequestParams deleteUserRequestParams)
+        {
+            _userService.DeleteUser(deleteUserRequestParams.username);
+            return Ok(new Status("User deleted successfully"));
         }
     }
 }

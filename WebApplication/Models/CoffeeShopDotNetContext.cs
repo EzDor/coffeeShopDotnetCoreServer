@@ -217,9 +217,7 @@ namespace WebApplication.Models
                     .HasName("uk_r43af9ap4edm43mmtq01oddj6")
                     .IsUnique();
 
-                entity.Property(e => e.UserId).HasColumnName("id");
-
-                entity.Property(e => e.CreationTime).HasColumnName("creation_time");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.FirstName)
                     .HasColumnName("first_name")
