@@ -1,6 +1,6 @@
 using WebApplication.Models.Statuses;
 
-namespace WebApplication.Controllers.Forms
+namespace WebApplication.Controllers.Forms.Users
 {
     public class UserForm
     {

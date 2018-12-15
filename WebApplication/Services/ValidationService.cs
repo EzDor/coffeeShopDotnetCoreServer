@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using WebApplication.Controllers.Forms;
+using WebApplication.Controllers.Forms.Components;
+using WebApplication.Controllers.Forms.Users;
 using WebApplication.Services.Interfaces;
 
 namespace WebApplication.Services
@@ -20,6 +21,14 @@ namespace WebApplication.Services
             }
         }
 
+        public void ValidateComponentForm(ComponentForm componentForm)
+        {
+            if (IsComponentInvalid(componentForm))
+            {
+                throw new ApplicationException("Some component details are missing or invalid.");
+            }
+        }
+
 
         /*********************************
         * Private Functions
@@ -32,6 +41,16 @@ namespace WebApplication.Services
                    || isContainsWhitespace(userForm.username, userForm.password)
                    || isContainsNotAllowedCharacters(userForm.username);
         }
+
+        private bool IsComponentInvalid(ComponentForm componentForm)
+        {
+            return isEmptyStringIncluded(componentForm.type, componentForm.name)
+                   || isContainsWhitespace(componentForm.type)
+                   || isContainsNotAllowedCharacters(componentForm.type)
+                   || componentForm.amount < 0
+                   || componentForm.price < 0;
+        }
+
 
         private bool isEmptyStringIncluded(params string[] strings)
         {
@@ -58,13 +77,6 @@ namespace WebApplication.Services
 //            }
 //        }
 //
-//        public void validateComponentForm(ComponentForm componentForm)
-//        {
-//            if (isComponentInvalid(componentForm))
-//            {
-//                throw new InputMismatchException("Some component details are missing or invalid.");
-//            }
-//        }
 //
 //
 //        public void validateOrderForm(OrderForm orderForm)
@@ -96,15 +108,7 @@ namespace WebApplication.Services
 //                   || productForm.getPrice() < 0;
 //        }
 //
-//        private boolean isComponentInvalid(ComponentForm componentForm)
-//        {
-//            return isEmptyStringIncluded(componentForm.getType(), componentForm.getName())
-//                   || isContainsWhitespace(componentForm.getType())
-//                   || isContainsNotAllowedCharacters(componentForm.getType())
-//                   || componentForm.getStatus() == null
-//                   || componentForm.getAmount() < 0
-//                   || componentForm.getPrice() < 0;
-//        }
+
 //
 //        private boolean isOrderInvalid(OrderForm orderForm)
 //        {

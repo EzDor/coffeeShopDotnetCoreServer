@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication.Controllers.Forms;
+using WebApplication.Controllers.Forms.Users;
 using WebApplication.Models;
 using WebApplication.Services.Interfaces;
 using WebApplication.Utils;
@@ -49,11 +48,11 @@ namespace WebApplication.Controllers
         }
 
         [HttpPost("update")]
-        public ActionResult<Status> Update([FromBody] UpdatedUserForm updatedUserForm)
+        public ActionResult<Status> UpdateUser([FromBody] UpdatedUserForm updatedUserForm)
         {
             var isAdminRequest = HttpContext.User.IsInRole(Constants.ADMIN_ROLE);
             _validationService.ValidateUserForm(updatedUserForm.updatedUserDetails);
-            _userService.Update(updatedUserForm, isAdminRequest);
+            _userService.UpdateUser(updatedUserForm, isAdminRequest);
             return Ok(new Status("User updated successfully"));
         }
 

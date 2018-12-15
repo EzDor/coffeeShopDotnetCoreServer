@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using WebApplication.Controllers.Forms;
+using WebApplication.Controllers.Forms.Users;
 using WebApplication.Models;
 using WebApplication.Models.Statuses;
 using WebApplication.Repositories.Interfaces;
@@ -65,7 +65,7 @@ namespace WebApplication.Services
             return _userRepository.GetAll().ToList();
         }
 
-        public void Update(UpdatedUserForm updatedUserForm, bool isAdminRequest)
+        public void UpdateUser(UpdatedUserForm updatedUserForm, bool isAdminRequest)
         {
             var user = GetUserToUpdate(updatedUserForm.usernameToUpdate, isAdminRequest);
             IsUserExist(user);

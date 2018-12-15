@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using WebApplication.Controllers.Forms;
+using WebApplication.Controllers.Forms.Users;
 using WebApplication.Models;
 
 namespace WebApplication.Services.Interfaces
@@ -9,7 +10,7 @@ namespace WebApplication.Services.Interfaces
         LoginResponseParams Login(string username, string password);
         void CreateUser(UserForm userForm, bool isAdminRequest);
         List<Users> GetUsers();
-        void Update(UpdatedUserForm updatedUserForm, bool isAdminRequest);
+        void UpdateUser(UpdatedUserForm updatedUserForm, bool isAdminRequest);
         Users GetActiveUser(string username);
         void DeleteUser(string username);
 

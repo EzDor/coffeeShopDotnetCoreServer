@@ -1,6 +1,4 @@
-using System;
-
-namespace WebApplication.Controllers.Forms
+namespace WebApplication.Controllers.Forms.Users
 {
     public class LoginResponseParams
     {
