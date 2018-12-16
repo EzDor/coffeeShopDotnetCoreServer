@@ -1,14 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace WebApplication.Models
 {
     public partial class ProductComponents
     {
-        public int ProductId { get; set; }
+        [JsonIgnore] [ForeignKey("Products")] public int ProductId { get; set; }
+
+        [JsonIgnore]
+        [ForeignKey("Components")]
         public int ProductComponentsId { get; set; }
 
-        public Products Product { get; set; }
+        [JsonIgnore] public Products Product { get; set; }
+
+        [JsonProperty("productComponents")]
         public Components ProductComponentsNavigation { get; set; }
     }
 }

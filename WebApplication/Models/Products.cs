@@ -1,7 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using WebApplication.Models.Statuses;
 
 namespace WebApplication.Models
 {
@@ -21,10 +23,13 @@ namespace WebApplication.Models
         public string Image { get; set; }
         public string Name { get; set; }
         public double? Price { get; set; }
-        public int? Status { get; set; }
         public string Type { get; set; }
 
-        public ICollection<OrderItemsToProduct> OrderItemsToProduct { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public ProductStatus Status { get; set; }
+
+        [JsonIgnore] public ICollection<OrderItemsToProduct> OrderItemsToProduct { get; set; }
+
         public ICollection<ProductComponents> ProductComponents { get; set; }
     }
 }

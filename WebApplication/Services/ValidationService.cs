@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using WebApplication.Controllers.Forms.Components;
+using WebApplication.Controllers.Forms.Products;
 using WebApplication.Controllers.Forms.Users;
 using WebApplication.Services.Interfaces;
 
@@ -29,6 +30,14 @@ namespace WebApplication.Services
             }
         }
 
+        public void ValidateProductForm(ProductForm productForm)
+        {
+            if (IsProductInvalid(productForm))
+            {
+                throw new ApplicationException("Some product details are missing or invalid.");
+            }
+        }
+
 
         /*********************************
         * Private Functions
@@ -51,6 +60,14 @@ namespace WebApplication.Services
                    || componentForm.price < 0;
         }
 
+        private bool IsProductInvalid(ProductForm productForm)
+        {
+            return isEmptyStringIncluded(productForm.type, productForm.name, productForm.description)
+                   || isContainsNotAllowedCharacters(productForm.type)
+                   || isContainsWhitespace(productForm.type)
+                   || productForm.price < 0;
+        }
+
 
         private bool isEmptyStringIncluded(params string[] strings)
         {
@@ -68,17 +85,6 @@ namespace WebApplication.Services
         }
 
 
-//
-//        public void validateProductForm(ProductForm productForm)
-//        {
-//            if (isProductInvalid(productForm))
-//            {
-//                throw new InputMismatchException("Some product details are missing or invalid.");
-//            }
-//        }
-//
-//
-//
 //        public void validateOrderForm(OrderForm orderForm)
 //        {
 //            if (isOrderInvalid(orderForm))
@@ -99,16 +105,7 @@ namespace WebApplication.Services
 //         * Private Functions
 //         *********************************/
 //
-//        private boolean isProductInvalid(ProductForm productForm)
-//        {
-//            return isEmptyStringIncluded(productForm.getType(), productForm.getName(), productForm.getDescription())
-//                   || isContainsNotAllowedCharacters(productForm.getType())
-//                   || isContainsWhitespace(productForm.getType())
-//                   || productForm.getStatus() == null
-//                   || productForm.getPrice() < 0;
-//        }
 //
-
 //
 //        private boolean isOrderInvalid(OrderForm orderForm)
 //        {
