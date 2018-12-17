@@ -8,5 +8,12 @@ namespace WebApplication.Repositories
         public OrderItemRepository(CoffeeShopDotNetContext coffeeShopDotNetContext) : base(coffeeShopDotNetContext)
         {
         }
+
+        public void RemoveOrderItemAndRelations(OrderItems orderItem)
+        {
+            _coffeeShopDotNetContext.OrderItemsToProduct.Remove(orderItem.OrderItemsToProduct);
+            _coffeeShopDotNetContext.OrderItemToComponents.RemoveRange(orderItem.OrderItemToComponents);
+            _coffeeShopDotNetContext.OrderItems.Remove(orderItem);
+        }
     }
 }

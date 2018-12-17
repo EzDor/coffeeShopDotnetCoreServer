@@ -12,6 +12,8 @@ namespace WebApplication.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IComponentService, ComponentService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IOrderItemService, OrderItemService>();
             services.AddScoped<IValidationService, ValidationService>();
             return services;
         }

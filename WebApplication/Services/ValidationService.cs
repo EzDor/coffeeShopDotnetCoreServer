@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using WebApplication.Controllers.Forms.Cart;
 using WebApplication.Controllers.Forms.Components;
 using WebApplication.Controllers.Forms.Products;
 using WebApplication.Controllers.Forms.Users;
@@ -38,87 +39,80 @@ namespace WebApplication.Services
             }
         }
 
+        public void ValidateOrderForm(OrderForm orderForm)
+        {
+            if (IsOrderInvalid(orderForm))
+            {
+                throw new ApplicationException("Some component details are missing or invalid.");
+            }
+        }
+
+
+        public void ValidateCreditCardForm(CreditCardForm creditCardForm)
+        {
+            if (IsCreditCardInvalid(creditCardForm))
+            {
+                throw new ApplicationException("Some component details are missing or invalid.");
+            }
+        }
+
 
         /*********************************
         * Private Functions
         *********************************/
 
 
-        private bool IsUserInvalid(UserForm userForm)
+        private static bool IsUserInvalid(UserForm userForm)
         {
-            return isEmptyStringIncluded(userForm.username, userForm.password)
-                   || isContainsWhitespace(userForm.username, userForm.password)
-                   || isContainsNotAllowedCharacters(userForm.username);
+            return IsEmptyStringIncluded(userForm.username, userForm.password)
+                   || IsContainsWhitespace(userForm.username, userForm.password)
+                   || IsContainsNotAllowedCharacters(userForm.username);
         }
 
-        private bool IsComponentInvalid(ComponentForm componentForm)
+        private static bool IsComponentInvalid(ComponentForm componentForm)
         {
-            return isEmptyStringIncluded(componentForm.type, componentForm.name)
-                   || isContainsWhitespace(componentForm.type)
-                   || isContainsNotAllowedCharacters(componentForm.type)
+            return IsEmptyStringIncluded(componentForm.type, componentForm.name)
+                   || IsContainsWhitespace(componentForm.type)
+                   || IsContainsNotAllowedCharacters(componentForm.type)
                    || componentForm.amount < 0
                    || componentForm.price < 0;
         }
 
-        private bool IsProductInvalid(ProductForm productForm)
+        private static bool IsProductInvalid(ProductForm productForm)
         {
-            return isEmptyStringIncluded(productForm.type, productForm.name, productForm.description)
-                   || isContainsNotAllowedCharacters(productForm.type)
-                   || isContainsWhitespace(productForm.type)
+            return IsEmptyStringIncluded(productForm.type, productForm.name, productForm.description)
+                   || IsContainsNotAllowedCharacters(productForm.type)
+                   || IsContainsWhitespace(productForm.type)
                    || productForm.price < 0;
         }
 
 
-        private bool isEmptyStringIncluded(params string[] strings)
+        private static bool IsOrderInvalid(OrderForm orderForm)
+        {
+            return IsEmptyStringIncluded(orderForm.componentsTypes.ToArray())
+                   || IsEmptyStringIncluded(orderForm.componentsTypes.ToArray());
+        }
+
+        private static bool IsCreditCardInvalid(CreditCardForm creditCardForm)
+        {
+            return IsEmptyStringIncluded(creditCardForm.creditNumber, creditCardForm.expireDate,
+                creditCardForm.cvv);
+        }
+
+
+        private static bool IsEmptyStringIncluded(params string[] strings)
         {
             return strings.Any(string.IsNullOrEmpty);
         }
 
-        private bool isContainsWhitespace(params string[] strings)
+        private static bool IsContainsWhitespace(params string[] strings)
         {
             return strings.Any(str => str.Any(char.IsWhiteSpace));
         }
 
-        private bool isContainsNotAllowedCharacters(params string[] strings)
+        private static bool IsContainsNotAllowedCharacters(params string[] strings)
         {
             return !strings.Any(str => Regex.IsMatch(str, "\\w+"));
         }
-
-
-//        public void validateOrderForm(OrderForm orderForm)
-//        {
-//            if (isOrderInvalid(orderForm))
-//            {
-//                throw new InputMismatchException("Some component details are missing or invalid.");
-//            }
-//        }
-//
-//        public void validateCreditCardForm(CreditCardForm creditCardForm)
-//        {
-//            if (isCreditCardInvalid(creditCardForm))
-//            {
-//                throw new InputMismatchException("Some component details are missing or invalid.");
-//            }
-//        }
-//
-//        /*********************************
-//         * Private Functions
-//         *********************************/
-//
-//
-//
-//        private boolean isOrderInvalid(OrderForm orderForm)
-//        {
-//            String[] componentsTypes = orderForm.getComponentsTypes().toArray(new String[0]);
-//            return isEmptyStringIncluded(orderForm.getProductType())
-//                   || isEmptyStringIncluded(componentsTypes);
-//        }
-//
-//        private boolean isCreditCardInvalid(CreditCardForm creditCardForm)
-//        {
-//            return isEmptyStringIncluded(creditCardForm.getCreditNumber(), creditCardForm.getExpireDate(),
-//                creditCardForm.getCvv());
-//        }
-//
     }
 }

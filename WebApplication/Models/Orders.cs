@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using WebApplication.Models.Statuses;
 
 namespace WebApplication.Models
 {
@@ -15,8 +18,12 @@ namespace WebApplication.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+
         public DateTime? CreationTime { get; set; }
-        public int? OrderStatus { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public OrderStatus OrderStatus { get; set; }
+
         public DateTime? UpdateTime { get; set; }
 
         public UserToOrders UserToOrders { get; set; }

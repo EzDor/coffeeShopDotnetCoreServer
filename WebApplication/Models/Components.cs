@@ -21,7 +21,7 @@ namespace WebApplication.Models
 
         public int? Amount { get; set; }
         public string Name { get; set; }
-        public double? Price { get; set; }
+        public double Price { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public ComponentStatus? Status { get; set; }
