@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using WebApplication.Models;
 using WebApplication.Repositories.Interfaces;
 
@@ -54,6 +55,11 @@ namespace WebApplication.Repositories
         public virtual void SaveChanges()
         {
             _coffeeShopDotNetContext.SaveChanges();
+        }
+
+        public IDbContextTransaction BeginTransaction()
+        {
+            return _coffeeShopDotNetContext.Database.BeginTransaction();
         }
 
 

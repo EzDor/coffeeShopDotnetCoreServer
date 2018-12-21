@@ -43,52 +43,93 @@ namespace WebApplication.Services
 
         public void AddItemToOrder(OrderForm orderForm, string username)
         {
-            var newOrderItem = _orderItemService.CreateOrderItem(orderForm);
-            var user = GetUser(username);
-            var order = GetOrCreate(user);
-            var orderRelation = new OrderToOrderItems()
+            var transaction = _orderRepository.BeginTransaction();
+            try
             {
-                Order = order,
-                OrderItems = newOrderItem
-            };
-            order.OrderToOrderItems.Add(orderRelation);
-            _orderRepository.SaveChanges();
+                var newOrderItem = _orderItemService.CreateOrderItem(orderForm);
+                var user = GetUser(username);
+                var order = GetOrCreate(user);
+                var orderRelation = new OrderToOrderItems()
+                {
+                    Order = order,
+                    OrderItems = newOrderItem
+                };
+                order.OrderToOrderItems.Add(orderRelation);
+                _orderRepository.SaveChanges();
+                transaction.Commit();
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException(
+                    "Could not add item to current order - some error was occured Error: " + exception.Message);
+            }
         }
 
         public void UpdateOrderItem(UpdateOrderForm updateOrderForm, string username)
         {
-            var order = GetAndValidateActiveOrder(username);
-            var orderItems = GetOrderItems(order);
-            _orderItemService.UpdateOrderItem(updateOrderForm.orderItemId, updateOrderForm.orderDetails, orderItems);
-            order.UpdateTime = DateTime.Now;
-            _orderRepository.SaveChanges();
+            var transaction = _orderRepository.BeginTransaction();
+            try
+            {
+                var order = GetAndValidateActiveOrder(username);
+                var orderItems = GetOrderItems(order);
+                _orderItemService.UpdateOrderItem(updateOrderForm.orderItemId, updateOrderForm.orderDetails,
+                    orderItems);
+                order.UpdateTime = DateTime.Now;
+                _orderRepository.SaveChanges();
+                transaction.Commit();
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException(
+                    "Could not update item at the current order - some error was occured Error: " + exception.Message);
+            }
         }
 
         public void DeleteOrderItem(int orderItemId, string username)
         {
-            var order = GetAndValidateActiveOrder(username);
-            var orderItems = GetOrderItems(order);
-            var orderRelationToDelete =
-                order.OrderToOrderItems.Single(orderRelation => orderRelation.OrderItemsId == orderItemId);
-            _orderRepository.RemoveOrderToOrderItemRelation(orderRelationToDelete);
-            _orderItemService.DeleteOrderItem(orderItemId, orderItems);
-            order.UpdateTime = DateTime.Now;
-            if (!orderItems.Any())
+            var transaction = _orderRepository.BeginTransaction();
+            try
             {
-                order.OrderStatus = OrderStatus.CANCELED;
-            }
+                var order = GetAndValidateActiveOrder(username);
+                var orderItems = GetOrderItems(order);
+                var orderRelationToDelete =
+                    order.OrderToOrderItems.Single(orderRelation => orderRelation.OrderItemsId == orderItemId);
+                _orderRepository.RemoveOrderToOrderItemRelation(orderRelationToDelete);
+                _orderItemService.DeleteOrderItem(orderItemId, orderItems);
+                order.UpdateTime = DateTime.Now;
+                if (!orderItems.Any())
+                {
+                    order.OrderStatus = OrderStatus.CANCELED;
+                }
 
-            _orderRepository.SaveChanges();
+                _orderRepository.SaveChanges();
+                transaction.Commit();
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException(
+                    "Could not delete item from current order - some error was occured Error: " + exception.Message);
+            }
         }
 
         public void Checkout(string username)
         {
-            var order = GetAndValidateActiveOrder(username);
-            var orderItems = GetOrderItems(order);
-            _orderItemService.Checkout(orderItems);
-            order.OrderStatus = OrderStatus.DONE;
-            order.UpdateTime = DateTime.Now;
-            _orderRepository.SaveChanges();
+            var transaction = _orderRepository.BeginTransaction();
+            try
+            {
+                var order = GetAndValidateActiveOrder(username);
+                var orderItems = GetOrderItems(order);
+                _orderItemService.Checkout(orderItems);
+                order.OrderStatus = OrderStatus.DONE;
+                order.UpdateTime = DateTime.Now;
+                _orderRepository.SaveChanges();
+                transaction.Commit();
+            }
+            catch (Exception exception)
+            {
+                throw new ApplicationException(
+                    "Could not checkout - some error was occured Error: " + exception.Message);
+            }
         }
 
         /*********************************
@@ -118,7 +159,7 @@ namespace WebApplication.Services
             return order;
         }
 
-        private static Orders CreateOrder(Users user)
+        private Orders CreateOrder(Users user)
         {
             var timestamp = DateTime.Now;
             var order = new Orders
@@ -128,6 +169,7 @@ namespace WebApplication.Services
                 CreationTime = timestamp,
                 UpdateTime = timestamp
             };
+            _orderRepository.Add(order);
             return order;
         }
 

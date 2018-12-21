@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace WebApplication.Repositories.Interfaces
 {
@@ -16,6 +17,7 @@ namespace WebApplication.Repositories.Interfaces
         void RemoveRange(IEnumerable<TEntity> entities);
 
         void SaveChanges();
+        IDbContextTransaction BeginTransaction();
 
         int Count();
 
